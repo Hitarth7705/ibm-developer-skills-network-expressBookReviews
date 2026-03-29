@@ -15,6 +15,41 @@ router.post("/register", (req, res) => {
 
     return res.status(200).json({ message: "User registered successfully" });
 });
+
+router.post("/login", (req, res) => {
+    const { username, password } = req.body;
+
+    let user = users.find(u => u.username === username && u.password === password);
+
+    if (!user) {
+        return res.status(404).json({ message: "Invalid credentials" });
+    }
+
+    let token = jwt.sign({ username }, "secretkey", { expiresIn: "1h" });
+
+    req.session.authorization = {
+        accessToken: token
+    };
+
+    return res.status(200).json({ message: "Login successful", token });
+});
+
+router.put("/auth/review/:isbn", (req, res) => {
+    const username = req.user.username;
+    const review = req.query.review;
+
+    books[req.params.isbn].reviews[username] = review;
+
+    return res.status(200).json({ message: "Review added/updated" });
+});
+
+router.delete("/auth/review/:isbn", (req, res) => {
+    const username = req.user.username;
+
+    delete books[req.params.isbn].reviews[username];
+
+    return res.status(200).json({ message: "Review deleted" });
+});
 const isValid = (username) => {
   //returns boolean
   //write code to check is the username is valid
