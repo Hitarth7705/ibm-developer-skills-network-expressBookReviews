@@ -108,6 +108,30 @@ function retrieveBookFromTitle(title) {
     }
   });
 }
+router.get('/books', async (req, res) => {
+    return res.status(200).json(books);
+});
+
+router.get('/isbn/:isbn', (req, res) => {
+    return new Promise((resolve, reject) => {
+        const book = books[req.params.isbn];
+        resolve(book);
+    }).then(data => res.json(data));
+});
+
+router.get('/author/:author', (req, res) => {
+    let result = Object.values(books).filter(
+        book => book.author === req.params.author
+    );
+    return res.json(result);
+});
+
+router.get('/title/:title', (req, res) => {
+    let result = Object.values(books).filter(
+        book => book.title === req.params.title
+    );
+    return res.json(result);
+});
 
 // Get all books based on title
 public_users.get("/title/:title", function (req, res) {
