@@ -4,7 +4,17 @@ let books = require("./booksdb.js");
 const regd_users = express.Router();
 
 let users = [];
+router.post("/register", (req, res) => {
+    const { username, password } = req.body;
 
+    if (users.find(user => user.username === username)) {
+        return res.status(400).json({ message: "User already exists" });
+    }
+
+    users.push({ username, password });
+
+    return res.status(200).json({ message: "User registered successfully" });
+});
 const isValid = (username) => {
   //returns boolean
   //write code to check is the username is valid
